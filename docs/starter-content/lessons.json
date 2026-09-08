@@ -1,0 +1,14 @@
+[
+  {
+    "id": "intro-variables",
+    "slug": "intro-variables",
+    "title": "Introduction to Variables",
+    "description": "Learn variable basics through a short command relay exercise."
+  },
+  {
+    "id": "git-basics",
+    "slug": "git-basics",
+    "title": "Git Basics",
+    "description": "Practice safe git inspection commands and review outputs."
+  }
+]
