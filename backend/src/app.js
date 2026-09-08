@@ -1,5 +1,6 @@
 const express = require('express');
 const cors = require('cors');
+const { rateLimit } = require('express-rate-limit');
 const path = require('node:path');
 const fs = require('node:fs');
 
@@ -24,8 +25,15 @@ function createApp() {
     const indexFile = path.join(distDir, 'index.html');
 
     if (fs.existsSync(indexFile)) {
+      const staticLimiter = rateLimit({
+        windowMs: 60_000,
+        limit: 240,
+        standardHeaders: true,
+        legacyHeaders: false
+      });
+
       app.use(express.static(distDir));
-      app.get('*', (req, res, next) => {
+      app.get('*', staticLimiter, (req, res, next) => {
         if (req.path.startsWith('/api') || req.path.startsWith('/health')) {
           return next();
         }
