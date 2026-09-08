@@ -14,7 +14,7 @@
     "migrate": "node backend/src/db/migrate.js",
     "migrate:reset": "node backend/src/db/migrate.js --reset",
     "seed": "node backend/src/db/seed.js",
-    "test": "node --test backend/tests/*.test.js"
+    "test": "node --test \"backend/tests/**/*.test.js\""
   },
   "dependencies": {
     "concurrently": "^9.1.2",
