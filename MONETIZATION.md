@@ -26,7 +26,8 @@ Polymath Knowledge Engine: a curriculum-driven learning system (lessons, session
 - [ ] Provision Postgres; run `npm run migrate` (adds `waitlist` table).
 - [ ] Deploy backend and frontend (see docs/deployment.md); set `NODE_ENV=production`, `TRUST_PROXY=true` behind a proxy, `CORS_ORIGIN`.
 - [ ] Create Stripe products/prices; set `STRIPE_SECRET_KEY`, `STRIPE_PRICE_PRO`, `STRIPE_PRICE_TEAM` in host secrets (never in git).
-- [ ] Add a Stripe webhook handler to provision API keys after payment (NOT built yet; keys are issued manually via `API_KEYS` for now).
+- [x] Stripe webhook -> license keys built (`POST /api/stripe/webhook`, vendored from the shared `license-webhook` module). Owner: set `STRIPE_WEBHOOK_SECRET` and `LICENSE_DB` (persistent disk), point a Stripe endpoint at the route, test in test mode.
+- [ ] Deliver issued keys by hand: `node scripts/license-outbox.js list`, send the key yourself, then `node scripts/license-outbox.js delivered <hash> --approver "<name>"`. Nothing is emailed automatically.
 - [ ] Set `REQUIRE_API_KEY=true`; issue keys to first customers.
 - [ ] Set `CHECKOUT_ENABLED=true` only after a test-mode purchase succeeds.
 - [ ] Publish terms, privacy policy, refund policy.

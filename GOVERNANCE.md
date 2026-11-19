@@ -22,5 +22,5 @@ Humans approve anything that spends money, publishes content, or contacts people
 ## Known gaps
 - Relay commands are still simulated; add per-command allowlist/approval before connecting real execution.
 - Audit log is not tamper-evident; ship it to external storage in production.
-- No Stripe webhook / automated key issuance yet.
+- Stripe webhook issues keys automatically (hash stored; plaintext queued until a human marks it delivered via `scripts/license-outbox.js`). It never emails or calls Stripe. `JsonStore` is single-process/file-based; webhook-issued keys are revoked on subscription deletion, payment failure or refund. Not tested against live Stripe.
 - Rate limiting is per-process memory; use a shared store if running multiple instances.

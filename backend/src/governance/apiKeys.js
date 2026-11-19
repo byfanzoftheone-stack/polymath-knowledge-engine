@@ -1,4 +1,5 @@
 const crypto = require('node:crypto');
+const fs = require('node:fs');
 
 const TIER_RANK = { free: 0, pro: 1, team: 2 };
 
@@ -26,12 +27,27 @@ function lookup(presented, keys) {
   return found;
 }
 
+// Validate a webhook-issued key. Only reads the store if it exists; never throws.
+function licenseTier(presented) {
+  try {
+    const { getLicenses, dbFile } = require('../billing/licenses');
+    if (!fs.existsSync(dbFile())) return null;
+    const r = getLicenses().validate(String(presented));
+    return r.valid && r.tier in TIER_RANK ? r.tier : null;
+  } catch {
+    return null;
+  }
+}
+
 // Attaches req.auth = { tier }. Reads `x-api-key` or `Authorization: Bearer`.
 function authenticate(req, _res, next) {
   const header = req.get('authorization') || '';
   const presented = req.get('x-api-key') || (header.startsWith('Bearer ') ? header.slice(7) : '');
   const match = lookup(presented, parseKeys());
-  req.auth = { tier: match ? match.tier : 'anonymous' };
+  let tier = match ? match.tier : 'anonymous';
+  // Fallback: keys issued by the Stripe webhook module (hash-only store). Env keys win.
+  if (!match && presented && String(presented).startsWith('FZ-')) tier = licenseTier(presented) || tier;
+  req.auth = { tier };
   next();
 }
 

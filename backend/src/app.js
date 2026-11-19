@@ -9,6 +9,7 @@ const lessonsRouter = require('./routes/lessons');
 const sessionsRouter = require('./routes/sessions');
 const relayRouter = require('./routes/relay');
 const billingRouter = require('./routes/billing');
+const stripeWebhookRouter = require('./routes/stripeWebhook');
 const { authenticate, requireTier } = require('./governance/apiKeys');
 const { auditMiddleware } = require('./governance/audit');
 
@@ -17,6 +18,8 @@ function createApp() {
 
   app.set('trust proxy', process.env.TRUST_PROXY === 'true' ? 1 : false);
   app.use(cors({ origin: process.env.CORS_ORIGIN ? process.env.CORS_ORIGIN.split(',') : true }));
+  // Stripe webhook needs the RAW body: mount before any JSON parser.
+  app.use('/api/stripe/webhook', stripeWebhookRouter);
   app.use(express.json({ limit: '50kb' }));
   app.use(authenticate);
   app.use(auditMiddleware);

@@ -32,6 +32,8 @@ router.post('/checkout', strictLimiter, async (req, res, next) => {
       mode: 'subscription',
       'line_items[0][price]': priceId,
       'line_items[0][quantity]': '1',
+      // Server-side price id lets the webhook map to a tier (client data never picks the tier).
+      'metadata[price_id]': priceId,
       success_url: `${base}/?checkout=success`,
       cancel_url: `${base}/?checkout=cancel`
     });
